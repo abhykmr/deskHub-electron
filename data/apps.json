@@ -1,0 +1,20 @@
+[
+  {
+    "name": "Chrome",
+    "type": "desktop",
+    "path": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+    "icon": "chrome.png"
+  },
+  {
+    "name": "GitHub",
+    "type": "web",
+    "url": "https://github.com",
+    "icon": "github.png"
+  },
+  {
+    "name": "chatGpt",
+    "type": "web",
+    "url": "https://chatgpt.com",
+    "icon": "chatgpt.png"
+  }
+]
