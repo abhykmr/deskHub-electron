@@ -6,20 +6,43 @@
   </head>
 
   <body>
-    <div class="dock-container">
-      <div id="dock" class="dock"></div>
+    <div class="app-container">
+      <header class="top-bar">
+        <h1 class="app-title">DeskHub</h1>
+
+        <button id="addButton" class="add-btn">+</button>
+      </header>
+
+      <div class="search-container">
+        <input id="searchInput" type="text" placeholder="Search apps..." />
+      </div>
+
+      <div id="appGrid" class="app-grid"></div>
     </div>
+
+    <!-- Add Web App Modal -->
+
     <div id="addModal" class="modal hidden">
       <div class="modal-content">
-        <h2>Add Web App</h2>
+        <div class="modal-header">
+          <h2>Add Web App</h2>
+        </div>
 
-        <input id="appName" type="text" placeholder="App Name" />
+        <div class="modal-body">
+          <div class="input-group">
+            <label>App Name</label>
+            <input id="appName" placeholder="Example: ChatGPT" />
+          </div>
 
-        <input id="appURL" type="text" placeholder="https://example.com" />
+          <div class="input-group">
+            <label>Website URL</label>
+            <input id="appURL" placeholder="https://example.com" />
+          </div>
+        </div>
 
-        <div class="modal-buttons">
-          <button id="saveApp">Add</button>
-          <button id="cancelApp">Cancel</button>
+        <div class="modal-actions">
+          <button id="cancelApp" class="btn cancel">Cancel</button>
+          <button id="saveApp" class="btn primary">Add App</button>
         </div>
       </div>
     </div>

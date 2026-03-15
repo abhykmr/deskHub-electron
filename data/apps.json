@@ -1,20 +1,476 @@
 [
   {
-    "name": "Chrome",
+    "name": "7-Zip File Manager",
+    "path": "C:\\Program Files\\7-Zip\\7zFM.exe",
     "type": "desktop",
-    "path": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
-    "icon": "chrome.png"
+    "icon": "7-Zip File Manager.png"
   },
   {
-    "name": "GitHub",
-    "type": "web",
-    "url": "https://github.com",
-    "icon": "github.png"
+    "name": "7-Zip Help",
+    "path": "C:\\Program Files\\7-Zip\\7-zip.chm",
+    "type": "desktop",
+    "icon": "7-Zip Help.png"
   },
   {
-    "name": "chatGpt",
-    "type": "web",
-    "url": "https://chatgpt.com",
-    "icon": "chatgpt.png"
+    "name": "Remote Desktop Connection",
+    "path": "%windir%\\system32\\mstsc.exe",
+    "type": "desktop",
+    "icon": "Remote Desktop Connection.png"
+  },
+  {
+    "name": "Steps Recorder",
+    "path": "%windir%\\system32\\psr.exe",
+    "type": "desktop",
+    "icon": "Steps Recorder.png"
+  },
+  {
+    "name": "Character Map",
+    "path": "%windir%\\system32\\charmap.exe",
+    "type": "desktop",
+    "icon": "Character Map.png"
+  },
+  {
+    "name": "Windows Media Player Legacy",
+    "path": "%ProgramFiles(x86)%\\Windows Media Player\\wmplayer.exe",
+    "type": "desktop",
+    "icon": "Windows Media Player Legacy.png"
+  },
+  {
+    "name": "Component Services",
+    "path": "%windir%\\system32\\comexp.msc",
+    "type": "desktop",
+    "icon": "Component Services.png"
+  },
+  {
+    "name": "Computer Management",
+    "path": "%windir%\\system32\\compmgmt.msc",
+    "type": "desktop",
+    "icon": "Computer Management.png"
+  },
+  {
+    "name": "dfrgui",
+    "path": "%windir%\\system32\\dfrgui.exe",
+    "type": "desktop",
+    "icon": "dfrgui.png"
+  },
+  {
+    "name": "Disk Cleanup",
+    "path": "%windir%\\system32\\cleanmgr.exe",
+    "type": "desktop",
+    "icon": "Disk Cleanup.png"
+  },
+  {
+    "name": "Event Viewer",
+    "path": "%windir%\\system32\\eventvwr.msc",
+    "type": "desktop",
+    "icon": "Event Viewer.png"
+  },
+  {
+    "name": "iSCSI Initiator",
+    "path": "%windir%\\system32\\iscsicpl.exe",
+    "type": "desktop",
+    "icon": "iSCSI Initiator.png"
+  },
+  {
+    "name": "Memory Diagnostics Tool",
+    "path": null,
+    "type": "desktop",
+    "icon": "Memory Diagnostics Tool.png"
+  },
+  {
+    "name": "ODBC Data Sources (32-bit)",
+    "path": "%windir%\\syswow64\\odbcad32.exe",
+    "type": "desktop",
+    "icon": "ODBC Data Sources (32-bit).png"
+  },
+  {
+    "name": "ODBC Data Sources (64-bit)",
+    "path": "%windir%\\system32\\odbcad32.exe",
+    "type": "desktop",
+    "icon": "ODBC Data Sources (64-bit).png"
+  },
+  {
+    "name": "Performance Monitor",
+    "path": "%windir%\\system32\\perfmon.msc",
+    "type": "desktop",
+    "icon": "Performance Monitor.png"
+  },
+  {
+    "name": "RecoveryDrive",
+    "path": null,
+    "type": "desktop",
+    "icon": "RecoveryDrive.png"
+  },
+  {
+    "name": "Registry Editor",
+    "path": "%windir%\\regedit.exe",
+    "type": "desktop",
+    "icon": "Registry Editor.png"
+  },
+  {
+    "name": "Resource Monitor",
+    "path": "%windir%\\system32\\perfmon.exe",
+    "type": "desktop",
+    "icon": "Resource Monitor.png"
+  },
+  {
+    "name": "services",
+    "path": "%windir%\\system32\\services.msc",
+    "type": "desktop",
+    "icon": "services.png"
+  },
+  {
+    "name": "System Configuration",
+    "path": null,
+    "type": "desktop",
+    "icon": "System Configuration.png"
+  },
+  {
+    "name": "System Information",
+    "path": "%windir%\\system32\\msinfo32.exe",
+    "type": "desktop",
+    "icon": "System Information.png"
+  },
+  {
+    "name": "Task Scheduler",
+    "path": "%windir%\\system32\\taskschd.msc",
+    "type": "desktop",
+    "icon": "Task Scheduler.png"
+  },
+  {
+    "name": "Windows Defender Firewall with Advanced Security",
+    "path": "%windir%\\system32\\WF.msc",
+    "type": "desktop",
+    "icon": "Windows Defender Firewall with Advanced Security.png"
+  },
+  {
+    "name": "Brave",
+    "path": "C:\\Program Files (x86)\\BraveSoftware\\Brave-Browser\\Application\\brave.exe",
+    "type": "desktop",
+    "icon": "Brave.png"
+  },
+  {
+    "name": "Excel",
+    "path": "C:\\Program Files (x86)\\Microsoft Office\\root\\Office16\\EXCEL.EXE",
+    "type": "desktop",
+    "icon": "Excel.png"
+  },
+  {
+    "name": "Git Bash",
+    "path": "C:\\Program Files\\Git\\git-bash.exe",
+    "type": "desktop",
+    "icon": "Git Bash.png"
+  },
+  {
+    "name": "Git CMD",
+    "path": "C:\\Program Files\\Git\\git-cmd.exe",
+    "type": "desktop",
+    "icon": "Git CMD.png"
+  },
+  {
+    "name": "Git GUI",
+    "path": "C:\\Program Files\\Git\\cmd\\git-gui.exe",
+    "type": "desktop",
+    "icon": "Git GUI.png"
+  },
+  {
+    "name": "Git Release Notes",
+    "path": "C:\\Program Files\\Git\\ReleaseNotes.html",
+    "type": "desktop",
+    "icon": "Git Release Notes.png"
+  },
+  {
+    "name": "Uninstall Go",
+    "path": "C:\\Windows\\System32\\msiexec.exe",
+    "type": "desktop",
+    "icon": "Uninstall Go.png"
+  },
+  {
+    "name": "Google Chrome",
+    "path": "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe",
+    "type": "desktop",
+    "icon": "Google Chrome.png"
+  },
+  {
+    "name": "IntelliJ IDEA 2025.3.1.1",
+    "path": "C:\\Program Files\\JetBrains\\IntelliJ IDEA 2025.3.1.1\\bin\\idea64.exe",
+    "type": "desktop",
+    "icon": "IntelliJ IDEA 2025.3.1.1.png"
+  },
+  {
+    "name": "McAfee",
+    "path": "C:\\Program Files\\McAfee\\WPS\\mc-launch.exe",
+    "type": "desktop",
+    "icon": "McAfee.png"
+  },
+  {
+    "name": "Microsoft Edge",
+    "path": "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
+    "type": "desktop",
+    "icon": "Microsoft Edge.png"
+  },
+  {
+    "name": "Office Language Preferences",
+    "path": "C:\\Program Files (x86)\\Microsoft Office\\root\\Office16\\SETLANG.EXE",
+    "type": "desktop",
+    "icon": "Office Language Preferences.png"
+  },
+  {
+    "name": "MySQL 8.4 Command Line Client - Unicode",
+    "path": "C:\\Program Files (x86)\\MySQL\\MySQL Server 8.4\\bin\\mysql.exe",
+    "type": "desktop",
+    "icon": "MySQL 8.4 Command Line Client - Unicode.png"
+  },
+  {
+    "name": "MySQL 8.4 Command Line Client",
+    "path": "C:\\Program Files (x86)\\MySQL\\MySQL Server 8.4\\bin\\mysql.exe",
+    "type": "desktop",
+    "icon": "MySQL 8.4 Command Line Client.png"
+  },
+  {
+    "name": "MySQL 8.4 Configurator",
+    "path": "C:\\Program Files (x86)\\MySQL\\MySQL Server 8.4\\bin\\mysql_configurator.exe",
+    "type": "desktop",
+    "icon": "MySQL 8.4 Configurator.png"
+  },
+  {
+    "name": "MySQL Workbench 8.0 CE",
+    "path": "C:\\Program Files (x86)\\MySQL\\MySQL Workbench 8.0 CE\\MySQLWorkbench.exe",
+    "type": "desktop",
+    "icon": "MySQL Workbench 8.0 CE.png"
+  },
+  {
+    "name": "Install Additional Tools for Node.js",
+    "path": "C:\\Windows\\System32\\cmd.exe",
+    "type": "desktop",
+    "icon": "Install Additional Tools for Node.js.png"
+  },
+  {
+    "name": "Node.js command prompt",
+    "path": "C:\\Windows\\System32\\cmd.exe",
+    "type": "desktop",
+    "icon": "Node.js command prompt.png"
+  },
+  {
+    "name": "Node.js",
+    "path": "C:\\Program Files (x86)\\nodejs\\node.exe",
+    "type": "desktop",
+    "icon": "Node.js.png"
+  },
+  {
+    "name": "Uninstall Node.js",
+    "path": "C:\\Windows\\SysWOW64\\msiexec.exe",
+    "type": "desktop",
+    "icon": "Uninstall Node.js.png"
+  },
+  {
+    "name": "OneDrive",
+    "path": "C:\\Program Files\\Microsoft OneDrive\\OneDrive.exe",
+    "type": "desktop",
+    "icon": "OneDrive.png"
+  },
+  {
+    "name": "OneNote",
+    "path": "C:\\Program Files (x86)\\Microsoft Office\\root\\Office16\\ONENOTE.EXE",
+    "type": "desktop",
+    "icon": "OneNote.png"
+  },
+  {
+    "name": "PowerPoint",
+    "path": "C:\\Program Files (x86)\\Microsoft Office\\root\\Office16\\POWERPNT.EXE",
+    "type": "desktop",
+    "icon": "PowerPoint.png"
+  },
+  {
+    "name": "Sticky Notes (new)",
+    "path": "C:\\Program Files (x86)\\Microsoft Office\\root\\Office16\\ONENOTE.EXE",
+    "type": "desktop",
+    "icon": "Sticky Notes (new).png"
+  },
+  {
+    "name": "Task Manager",
+    "path": "%windir%\\system32\\taskmgr.exe",
+    "type": "desktop",
+    "icon": "Task Manager.png"
+  },
+  {
+    "name": "Documentation",
+    "path": "C:\\Program Files (x86)\\VideoLAN\\VLC\\Documentation.url",
+    "type": "desktop",
+    "icon": "Documentation.png"
+  },
+  {
+    "name": "Release Notes",
+    "path": "C:\\Program Files (x86)\\VideoLAN\\VLC\\NEWS.txt",
+    "type": "desktop",
+    "icon": "Release Notes.png"
+  },
+  {
+    "name": "VideoLAN Website",
+    "path": "C:\\Program Files (x86)\\VideoLAN\\VLC\\VideoLAN Website.url",
+    "type": "desktop",
+    "icon": "VideoLAN Website.png"
+  },
+  {
+    "name": "VLC media player - reset preferences and cache files",
+    "path": "C:\\Program Files (x86)\\VideoLAN\\VLC\\vlc.exe",
+    "type": "desktop",
+    "icon": "VLC media player - reset preferences and cache files.png"
+  },
+  {
+    "name": "VLC media player skinned",
+    "path": "C:\\Program Files (x86)\\VideoLAN\\VLC\\vlc.exe",
+    "type": "desktop",
+    "icon": "VLC media player skinned.png"
+  },
+  {
+    "name": "VLC media player",
+    "path": "C:\\Program Files (x86)\\VideoLAN\\VLC\\vlc.exe",
+    "type": "desktop",
+    "icon": "VLC media player.png"
+  },
+  {
+    "name": "Developer Command Prompt for VS 2022",
+    "path": "%comspec%",
+    "type": "desktop",
+    "icon": "Developer Command Prompt for VS 2022.png"
+  },
+  {
+    "name": "Developer PowerShell for VS 2022",
+    "path": "C:\\Windows\\SysWOW64\\WindowsPowerShell\\v1.0\\powershell.exe",
+    "type": "desktop",
+    "icon": "Developer PowerShell for VS 2022.png"
+  },
+  {
+    "name": "x64 Native Tools Command Prompt for VS 2022",
+    "path": "%comspec%",
+    "type": "desktop",
+    "icon": "x64 Native Tools Command Prompt for VS 2022.png"
+  },
+  {
+    "name": "x64_x86 Cross Tools Command Prompt for VS 2022",
+    "path": "%comspec%",
+    "type": "desktop",
+    "icon": "x64_x86 Cross Tools Command Prompt for VS 2022.png"
+  },
+  {
+    "name": "x86 Native Tools Command Prompt for VS 2022",
+    "path": "%comspec%",
+    "type": "desktop",
+    "icon": "x86 Native Tools Command Prompt for VS 2022.png"
+  },
+  {
+    "name": "x86_x64 Cross Tools Command Prompt for VS 2022",
+    "path": "%comspec%",
+    "type": "desktop",
+    "icon": "x86_x64 Cross Tools Command Prompt for VS 2022.png"
+  },
+  {
+    "name": "Visual Studio 2022",
+    "path": "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\Community\\Common7\\IDE\\devenv.exe",
+    "type": "desktop",
+    "icon": "Visual Studio 2022.png"
+  },
+  {
+    "name": "Visual Studio Installer",
+    "path": "C:\\Program Files (x86)\\Microsoft Visual Studio\\Installer\\setup.exe",
+    "type": "desktop",
+    "icon": "Visual Studio Installer.png"
+  },
+  {
+    "name": "Warp",
+    "path": "C:\\Program Files\\Warp\\warp.exe",
+    "type": "desktop",
+    "icon": "Warp.png"
+  },
+  {
+    "name": "Application Verifier (X64)",
+    "path": "C:\\Windows\\System32\\appverif.exe",
+    "type": "desktop",
+    "icon": "Application Verifier (X64).png"
+  },
+  {
+    "name": "Application Verifier (WOW)",
+    "path": "C:\\Windows\\SysWOW64\\appverif.exe",
+    "type": "desktop",
+    "icon": "Application Verifier (WOW).png"
+  },
+  {
+    "name": "Windows App Cert Kit",
+    "path": "C:\\Program Files (x86)\\Windows Kits\\10\\App Certification Kit\\appcertui.exe",
+    "type": "desktop",
+    "icon": "Windows App Cert Kit.png"
+  },
+  {
+    "name": "Documentation for Desktop Apps",
+    "path": "C:\\Program Files (x86)\\Windows Kits\\10\\Shortcuts\\DesktopAppsDocumentation.url",
+    "type": "desktop",
+    "icon": "Documentation for Desktop Apps.png"
+  },
+  {
+    "name": "Documentation for UWP Apps",
+    "path": "C:\\Program Files (x86)\\Windows Kits\\10\\Shortcuts\\UWPAppsDocumentation.url",
+    "type": "desktop",
+    "icon": "Documentation for UWP Apps.png"
+  },
+  {
+    "name": "Sample Desktop Apps",
+    "path": "C:\\Program Files (x86)\\Windows Kits\\10\\Shortcuts\\DesktopAppsSamples.url",
+    "type": "desktop",
+    "icon": "Sample Desktop Apps.png"
+  },
+  {
+    "name": "Sample UWP Apps",
+    "path": "C:\\Program Files (x86)\\Windows Kits\\10\\Shortcuts\\UWPAppsSamples.url",
+    "type": "desktop",
+    "icon": "Sample UWP Apps.png"
+  },
+  {
+    "name": "Tools for Desktop Apps",
+    "path": "C:\\Program Files (x86)\\Windows Kits\\10\\Shortcuts\\DesktopAppsToolsDocumentation.url",
+    "type": "desktop",
+    "icon": "Tools for Desktop Apps.png"
+  },
+  {
+    "name": "Tools for UWP Apps",
+    "path": "C:\\Program Files (x86)\\Windows Kits\\10\\Shortcuts\\UWPAppsToolsDocumentation.url",
+    "type": "desktop",
+    "icon": "Tools for UWP Apps.png"
+  },
+  {
+    "name": "Windows Software Development Kit",
+    "path": "C:\\WINDOWS\\explorer.exe",
+    "type": "desktop",
+    "icon": "Windows Software Development Kit.png"
+  },
+  {
+    "name": "Windows PowerShell ISE (x86)",
+    "path": "%windir%\\syswow64\\WindowsPowerShell\\v1.0\\PowerShell_ISE.exe",
+    "type": "desktop",
+    "icon": "Windows PowerShell ISE (x86).png"
+  },
+  {
+    "name": "Windows PowerShell ISE",
+    "path": "%windir%\\system32\\WindowsPowerShell\\v1.0\\PowerShell_ISE.exe",
+    "type": "desktop",
+    "icon": "Windows PowerShell ISE.png"
+  },
+  {
+    "name": "Word",
+    "path": "C:\\Program Files (x86)\\Microsoft Office\\root\\Office16\\WINWORD.EXE",
+    "type": "desktop",
+    "icon": "Word.png"
+  },
+  {
+    "name": "WSL Settings",
+    "path": "C:\\WINDOWS\\Installer\\{B637A6A6-5591-4503-AFD8-776164EB837A}\\wsl.ico",
+    "type": "desktop",
+    "icon": "WSL Settings.png"
+  },
+  {
+    "name": "WSL",
+    "path": "C:\\WINDOWS\\Installer\\{B637A6A6-5591-4503-AFD8-776164EB837A}\\wsl.ico",
+    "type": "desktop",
+    "icon": "WSL.png"
   }
 ]

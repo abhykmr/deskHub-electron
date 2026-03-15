@@ -1,8 +1,15 @@
-const { app, BrowserWindow, Tray, Menu, ipcMain } = require("electron");
+const {
+  app,
+  BrowserWindow,
+  Tray,
+  Menu,
+  ipcMain,
+  globalShortcut,
+} = require("electron");
 const path = require("path");
 const { exec } = require("child_process");
 const fs = require("fs");
-
+const scanApps = require("./appScanner");
 let mainWindow;
 let tray;
 
@@ -11,8 +18,10 @@ function createWindow() {
     width: 900,
     height: 600,
     show: true,
-    // icon: "tray.png",
+    frame: false,
+    icon: path.join(__dirname, "../../assets/tray.png"),
     transparent: true,
+    autoHideMenuBar: true,
     webPreferences: {
       preload: path.join(__dirname, "../preload/preload.js"),
     },
@@ -20,7 +29,7 @@ function createWindow() {
 
   mainWindow.loadFile(path.join(__dirname, "../renderer/index.html"));
 
-  // mainWindow.webContents.openDevTools();
+  mainWindow.webContents.openDevTools();
 
   mainWindow.on("close", (event) => {
     if (!app.isQuiting) {
@@ -46,8 +55,33 @@ ipcMain.on("add-web-app", (event, newApp) => {
   fs.writeFileSync(appsFile, JSON.stringify(apps, null, 2));
 });
 
+// ipcMain.handle("scan-apps", async () => {
+//   const apps = await scanApps();
+//   fs.writeFileSync(appsFile, JSON.stringify(apps, null, 2));
+//   return apps;
+// });
+
+// const appsFile = path.join(__dirname, "../../data/apps.json");
+ipcMain.handle("get-apps", async () => {
+  const systemApps = await scanApps();
+  // console.log(systemApps);
+  const userApps = JSON.parse(fs.readFileSync(appsFile));
+  // console.log(userApps);
+
+  return [...systemApps, ...userApps];
+});
+
 app.whenReady().then(() => {
   createWindow();
+
+  globalShortcut.register("Control+Space", () => {
+    if (mainWindow.isVisible()) {
+      mainWindow.hide();
+    } else {
+      mainWindow.show();
+      mainWindow.focus();
+    }
+  });
 
   tray = new Tray(path.join(__dirname, "../../assets/tray.png"));
 
@@ -69,6 +103,10 @@ app.whenReady().then(() => {
   tray.setContextMenu(contextMenu);
 
   tray.on("click", () => {
-    mainWindow.isVisible() ? mainWindow.hide : mainWindow.show();
+    mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show();
   });
+});
+
+app.on("will-quit", () => {
+  globalShortcut.unregisterAll();
 });
