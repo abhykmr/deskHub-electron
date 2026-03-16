@@ -36,7 +36,7 @@ npm start
 
 ## Preview
 
-![DeskHub UI](docs/deskhub-preview.png)
+![DeskHub UI](docs/deskhub-preview-2.png)
 
 ## Future Features
 
