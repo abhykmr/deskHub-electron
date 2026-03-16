@@ -1,6 +1,22 @@
-node_modules
-dist
-build
-*.log
-.env
+# Node modules
+node_modules/
+
+# Logs
+npm-debug.log*
+
+# Electron build
+dist/
+build/
+
+# OS files
 .DS_Store
+Thumbs.db
+
+# Environment
+.env
+
+# Icons generated during scan
+assets/icons/*.png
+
+# VS Code
+.vscode/

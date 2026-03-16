@@ -5,74 +5,142 @@ const {
   Menu,
   ipcMain,
   globalShortcut,
+  shell,
 } = require("electron");
+
 const path = require("path");
-const { exec } = require("child_process");
 const fs = require("fs");
+
 const scanApps = require("./appScanner");
+
 let mainWindow;
 let tray;
+let cachedSystemApps = [];
+
+const appsFile = path.join(__dirname, "../../data/apps.json");
 
 function createWindow() {
   mainWindow = new BrowserWindow({
     width: 900,
     height: 600,
+    center: true,
     show: true,
     frame: false,
-    icon: path.join(__dirname, "../../assets/tray.png"),
     transparent: true,
     autoHideMenuBar: true,
+    icon: path.join(__dirname, "../../assets/tray.png"),
+
     webPreferences: {
       preload: path.join(__dirname, "../preload/preload.js"),
+      contextIsolation: true,
+      nodeIntegration: false,
     },
   });
 
   mainWindow.loadFile(path.join(__dirname, "../renderer/index.html"));
 
-  mainWindow.webContents.openDevTools();
+  // Open DevTools only in development
+  if (!app.isPackaged) {
+    mainWindow.webContents.openDevTools();
+  }
 
+  // Prevent closing → hide instead
   mainWindow.on("close", (event) => {
     if (!app.isQuiting) {
       event.preventDefault();
       mainWindow.hide();
     }
   });
+
+  // Hide launcher when focus lost (optional but nice UX)
+  mainWindow.on("blur", () => {
+    mainWindow.hide();
+  });
 }
 
-ipcMain.on("launch-app", (event, appPath) => {
-  console.log("Launching: ", appPath);
-  exec(`"${appPath}"`, (error) => {
-    if (error) {
-      console.log("Error launching app: ", error);
-    }
-  });
+/*
+------------------------------------------------
+Launch Desktop Apps
+------------------------------------------------
+*/
+
+ipcMain.handle("launch-app", async (event, appPath) => {
+  console.log("Launch request:", appPath);
+  const result = await shell.openPath(appPath);
+
+  console.log("Launch result:", result);
+
+  if (result) {
+    console.log("Error launching app:", result);
+  }
 });
 
-const appsFile = path.join(__dirname, "../../data/apps.json");
+/*
+------------------------------------------------
+Add Web App
+------------------------------------------------
+*/
+
 ipcMain.on("add-web-app", (event, newApp) => {
-  const apps = JSON.parse(fs.readFileSync(appsFile));
+  let apps = [];
+
+  try {
+    apps = JSON.parse(fs.readFileSync(appsFile));
+  } catch {
+    apps = [];
+  }
+
   apps.push(newApp);
+
   fs.writeFileSync(appsFile, JSON.stringify(apps, null, 2));
 });
 
-// ipcMain.handle("scan-apps", async () => {
-//   const apps = await scanApps();
-//   fs.writeFileSync(appsFile, JSON.stringify(apps, null, 2));
-//   return apps;
-// });
+/*
+------------------------------------------------
+Get Apps (system + user)
+------------------------------------------------
+*/
 
-// const appsFile = path.join(__dirname, "../../data/apps.json");
 ipcMain.handle("get-apps", async () => {
-  const systemApps = await scanApps();
-  // console.log(systemApps);
-  const userApps = JSON.parse(fs.readFileSync(appsFile));
-  // console.log(userApps);
+  let userApps = [];
 
-  return [...systemApps, ...userApps];
+  try {
+    userApps = JSON.parse(fs.readFileSync(appsFile));
+  } catch {
+    userApps = [];
+  }
+
+  return [...cachedSystemApps, ...userApps];
 });
 
-app.whenReady().then(() => {
+/*
+------------------------------------------------
+App Ready
+------------------------------------------------
+*/
+
+app.whenReady().then(async () => {
   createWindow();
+
+  /*
+  ---------------------------------------------
+  Progressive App Scan
+  ---------------------------------------------
+  */
+
+  scanApps((apps) => {
+    cachedSystemApps = apps;
+
+    if (mainWindow) {
+      mainWindow.webContents.send("apps-updated", cachedSystemApps);
+    }
+  });
+
+  /*
+  ---------------------------------------------
+  Global Shortcut
+  ---------------------------------------------
+  */
 
   globalShortcut.register("Control+Space", () => {
     if (mainWindow.isVisible()) {
@@ -83,12 +151,21 @@ app.whenReady().then(() => {
     }
   });
 
+  /*
+  ---------------------------------------------
+  System Tray
+  ---------------------------------------------
+  */
+
   tray = new Tray(path.join(__dirname, "../../assets/tray.png"));
 
   const contextMenu = Menu.buildFromTemplate([
     {
       label: "Open DeskHub",
-      click: () => mainWindow.show(),
+      click: () => {
+        mainWindow.show();
+        mainWindow.focus();
+      },
     },
     {
       label: "Quit",
@@ -103,9 +180,19 @@ app.whenReady().then(() => {
   tray.setContextMenu(contextMenu);
 
   tray.on("click", () => {
-    mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show();
+    if (mainWindow.isVisible()) {
+      mainWindow.hide();
+    } else {
+      mainWindow.show();
+      mainWindow.focus();
+    }
   });
 });
+/*
+------------------------------------------------
+Cleanup
+------------------------------------------------
+*/
 
 app.on("will-quit", () => {
   globalShortcut.unregisterAll();

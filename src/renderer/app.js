@@ -6,20 +6,35 @@ const modal = document.getElementById("addModal");
 const saveBtn = document.getElementById("saveApp");
 const cancelBtn = document.getElementById("cancelApp");
 
+const nameInput = document.getElementById("appName");
+const urlInput = document.getElementById("appURL");
+
 let allApps = [];
+let filteredApps = [];
+let selectedIndex = 0;
+
+/*
+------------------------------------------------
+Modal Controls
+------------------------------------------------
+*/
 
 addButton.addEventListener("click", () => {
   modal.classList.remove("hidden");
+  nameInput.focus();
 });
 
 cancelBtn.addEventListener("click", () => {
   modal.classList.add("hidden");
 });
 
-saveBtn.addEventListener("click", () => {
-  const nameInput = document.getElementById("appName");
-  const urlInput = document.getElementById("appURL");
+/*
+------------------------------------------------
+Save Web App
+------------------------------------------------
+*/
 
+saveBtn.addEventListener("click", () => {
   const name = nameInput.value.trim();
   const url = urlInput.value.trim();
 
@@ -29,9 +44,9 @@ saveBtn.addEventListener("click", () => {
   }
 
   const newApp = {
-    name: name,
+    name,
     type: "web",
-    url: url,
+    url,
   };
 
   window.api.addWebApp(newApp);
@@ -44,67 +59,161 @@ saveBtn.addEventListener("click", () => {
   loadApps();
 });
 
-window.addEventListener("DOMContentLoaded", () => {
-  const search = document.getElementById("searchInput");
-  if (search) search.focus();
-});
+/*
+------------------------------------------------
+Load Apps (initial load)
+------------------------------------------------
+*/
 
 async function loadApps() {
+  grid.innerHTML = "<p>Loading apps...</p>";
+
   const apps = await window.api.getApps();
-  // console.log("Apps received:", apps);
 
   allApps = apps;
 
-  renderApps(apps);
+  applyFilter();
 }
+
+/*
+------------------------------------------------
+Progressive Updates From Main Process
+------------------------------------------------
+*/
+
+window.api.onAppsUpdated((apps) => {
+  allApps = apps;
+  applyFilter();
+});
+
+/*
+------------------------------------------------
+Filtering Logic
+------------------------------------------------
+*/
+
+function applyFilter() {
+  const query = searchInput.value.toLowerCase();
+
+  if (!query) {
+    // When no search → hide hidden apps
+    filteredApps = allApps.filter((app) => !app.hidden);
+  } else {
+    // When searching → include hidden apps
+    filteredApps = allApps.filter((app) =>
+      app.name.toLowerCase().includes(query),
+    );
+  }
+
+  selectedIndex = 0;
+
+  renderApps(filteredApps);
+}
+
+/*
+------------------------------------------------
+Render Apps
+------------------------------------------------
+*/
 
 function renderApps(apps) {
   grid.innerHTML = "";
 
-  apps.forEach((app) => {
+  if (!apps.length) {
+    grid.innerHTML = "<p>No apps found</p>";
+    return;
+  }
+
+  apps.forEach((app, index) => {
     const item = document.createElement("div");
     item.className = "app-item";
 
-    const icon = document.createElement("img");
-    if (app.icon) {
-      icon.src = "../../assets/icons/" + app.icon;
-    } else {
-      icon.src = "../../assets/tray.png";
+    if (index === selectedIndex) {
+      item.classList.add("selected");
     }
+
+    const icon = document.createElement("img");
+
+    icon.src = app.icon
+      ? `../../assets/icons/${app.icon}`
+      : "../../assets/tray.png";
+
+    icon.onerror = () => {
+      icon.src = "../../assets/tray.png";
+    };
+
     const label = document.createElement("span");
     label.textContent = app.name;
 
     item.appendChild(icon);
     item.appendChild(label);
 
-    item.onclick = () => {
-      if (app.type === "web") {
-        window.open(app.url);
-      } else {
-        window.api.launchApp(app.path);
-      }
-    };
+    item.onclick = () => launchApp(app);
 
     grid.appendChild(item);
   });
 }
 
-/* Search */
+/*
+------------------------------------------------
+Launch App
+------------------------------------------------
+*/
+
+function launchApp(app) {
+  if (app.type === "web") {
+    window.open(app.url);
+  } else {
+    window.api.launchApp(app.path);
+  }
+}
+
+/*
+------------------------------------------------
+Search
+------------------------------------------------
+*/
 
 searchInput.addEventListener("input", () => {
-  const query = searchInput.value.toLowerCase();
+  applyFilter();
+});
 
-  if (query === "") {
-    renderApps(allApps);
-    return;
+/*
+------------------------------------------------
+Keyboard Navigation
+------------------------------------------------
+*/
+
+document.addEventListener("keydown", (e) => {
+  if (!filteredApps.length) return;
+
+  if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+    selectedIndex = (selectedIndex + 1) % filteredApps.length;
+    renderApps(filteredApps);
   }
 
-  const filtered = allApps.filter((app) =>
-    app.name.toLowerCase().includes(query),
-  );
+  if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+    selectedIndex =
+      (selectedIndex - 1 + filteredApps.length) % filteredApps.length;
 
-  renderApps(filtered);
+    renderApps(filteredApps);
+  }
+
+  if (e.key === "Enter") {
+    const app = filteredApps[selectedIndex];
+    if (app) launchApp(app);
+  }
+
+  if (e.key === "Escape") {
+    window.close();
+  }
 });
+
+/*
+------------------------------------------------
+Modal Background Click
+------------------------------------------------
+*/
 
 modal.addEventListener("click", (e) => {
   if (e.target === modal) {
@@ -112,10 +221,34 @@ modal.addEventListener("click", (e) => {
   }
 });
 
-document.getElementById("appURL").addEventListener("keydown", (e) => {
+/*
+------------------------------------------------
+Modal Enter Key
+------------------------------------------------
+*/
+
+urlInput.addEventListener("keydown", (e) => {
   if (e.key === "Enter") {
     saveBtn.click();
   }
 });
+
+/*
+------------------------------------------------
+Focus Search on Launch
+------------------------------------------------
+*/
+
+window.addEventListener("DOMContentLoaded", () => {
+  if (searchInput) {
+    searchInput.focus();
+  }
+});
+
+/*
+------------------------------------------------
+Start
+------------------------------------------------
+*/
 
 loadApps();

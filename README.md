@@ -1,13 +1,20 @@
 # DeskHub
 
-DeskHub is a minimal desktop app launcher built with Electron.
+DeskHub is a minimal keyboard-driven desktop launcher built with Electron.
+
+It allows you to quickly launch desktop apps and web apps using a searchable grid interface.
 
 ## Features
 
-- Launch installed applications
-- Add websites as apps
-- Dock-style interface
+- Windows app detection
+- Start Menu scanning
+- Registry app detection
+- UWP app support
+- Progressive loading
 - System tray integration
+- Global shortcut (Ctrl + Space)
+- Keyboard navigation
+- Web app support
 
 ## Tech Stack
 
@@ -41,7 +48,7 @@ npm start
 
 ## Future Features
 
-- Auto detect installed apps
-- Search launcher
-- Keyboard shortcuts
-- Drag and reorder dock apps
+- Fuzzy search
+- Pinned apps
+- Plugin system
+- Cross platform support

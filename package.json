@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "extract-file-icon": "^0.3.2",
-    "windows-shortcuts": "^0.1.6"
+    "windows-shortcuts": "^0.1.6",
+    "winreg": "^1.2.5"
   }
 }
