@@ -12,6 +12,7 @@ const path = require("path");
 const fs = require("fs");
 
 const scanApps = require("./appScanner");
+const { getFavicon } = require("../utils/iconFetcher");
 
 let mainWindow;
 let tray;
@@ -80,7 +81,6 @@ ipcMain.handle("launch-app", async (event, appPath) => {
 Add Web App
 ------------------------------------------------
 */
-
 ipcMain.on("add-web-app", (event, newApp) => {
   let apps = [];
 
@@ -90,7 +90,15 @@ ipcMain.on("add-web-app", (event, newApp) => {
     apps = [];
   }
 
-  apps.push(newApp);
+  // 🔥 Add favicon here
+  const icon = getFavicon(newApp.url);
+
+  const appWithIcon = {
+    ...newApp,
+    icon,
+  };
+
+  apps.push(appWithIcon);
 
   fs.writeFileSync(appsFile, JSON.stringify(apps, null, 2));
 });
