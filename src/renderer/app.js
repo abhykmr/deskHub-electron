@@ -44,7 +44,7 @@ Save Web App
 ------------------------------------------------
 */
 
-saveBtn.addEventListener("click", async () => {
+saveBtn.addEventListener("click", () => {
   const name = nameInput.value.trim();
   const url = urlInput.value.trim();
 
@@ -59,12 +59,7 @@ saveBtn.addEventListener("click", async () => {
     url,
   };
 
-  const result = await window.api.addWebApp(newApp);
-
-  if (!result.ok) {
-    alert(result.error || "Could not add web app");
-    return;
-  }
+  window.api.addWebApp(newApp);
 
   modal.classList.add("hidden");
 
@@ -173,17 +168,11 @@ Launch App
 ------------------------------------------------
 */
 
-async function launchApp(app) {
-  let result = "";
-
+function launchApp(app) {
   if (app.type === "web") {
-    result = await window.api.openWebApp(app.url);
+    window.open(app.url);
   } else {
-    result = await window.api.launchApp(app.path);
-  }
-
-  if (result) {
-    alert(result);
+    window.api.launchApp(app.path);
   }
 }
 
