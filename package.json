@@ -1,6 +1,6 @@
 {
   "name": "deskhub",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Minimal desktop launcher built with Electron",
   "main": "src/main/main.js",
   "scripts": {
@@ -10,8 +10,16 @@
   "build": {
     "appId": "com.abhay.deskhub",
     "productName": "DeskHub",
+    "artifactName": "DeskHub-Setup-${version}.${ext}",
+    "files": [
+      "src/**/*",
+      "assets/**/*",
+      "data/apps.json",
+      "package.json"
+    ],
     "win": {
-      "target": "nsis"
+      "target": "nsis",
+      "icon": "assets/tray.png"
     }
   },
   "author": "Abhay Kumar",

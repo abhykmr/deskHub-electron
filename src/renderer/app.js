@@ -13,6 +13,16 @@ let allApps = [];
 let filteredApps = [];
 let selectedIndex = 0;
 
+function getIconSrc(app) {
+  if (!app.icon) return "../../assets/tray.png";
+
+  if (/^(https?:|file:|data:)/.test(app.icon)) {
+    return app.icon;
+  }
+
+  return `../../assets/icons/${app.icon}`;
+}
+
 /*
 ------------------------------------------------
 Modal Controls
@@ -34,7 +44,7 @@ Save Web App
 ------------------------------------------------
 */
 
-saveBtn.addEventListener("click", () => {
+saveBtn.addEventListener("click", async () => {
   const name = nameInput.value.trim();
   const url = urlInput.value.trim();
 
@@ -49,7 +59,12 @@ saveBtn.addEventListener("click", () => {
     url,
   };
 
-  window.api.addWebApp(newApp);
+  const result = await window.api.addWebApp(newApp);
+
+  if (!result.ok) {
+    alert(result.error || "Could not add web app");
+    return;
+  }
 
   modal.classList.add("hidden");
 
@@ -134,9 +149,7 @@ function renderApps(apps) {
 
     const icon = document.createElement("img");
 
-    icon.src = app.icon
-      ? `../../assets/icons/${app.icon}`
-      : "../../assets/tray.png";
+    icon.src = getIconSrc(app);
 
     icon.onerror = () => {
       icon.src = "../../assets/tray.png";
@@ -160,11 +173,17 @@ Launch App
 ------------------------------------------------
 */
 
-function launchApp(app) {
+async function launchApp(app) {
+  let result = "";
+
   if (app.type === "web") {
-    window.open(app.url);
+    result = await window.api.openWebApp(app.url);
   } else {
-    window.api.launchApp(app.path);
+    result = await window.api.launchApp(app.path);
+  }
+
+  if (result) {
+    alert(result);
   }
 }
 

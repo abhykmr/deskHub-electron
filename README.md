@@ -1,6 +1,6 @@
 # DeskHub
 
-DeskHub is a minimal keyboard-driven desktop launcher built with Electron.
+DeskHub is a minimal keyboard-driven desktop launcher for Windows, built with Electron.
 
 It allows you to quickly launch desktop apps and web apps using a searchable grid interface.
 
@@ -31,15 +31,21 @@ preload/ # Secure bridge between UI and system
 renderer/ # UI layer
 
 data/
-apps.json # Stores installed apps
+apps.json # Empty default user app list for release
 
 assets/
 icons and images
+
+Runtime data is stored in Electron's per-user app data directory, including added web apps and generated desktop app icons.
 
 ## Run the project
 
 npm install
 npm start
+
+## Build the installer
+
+npm run build
 
 ## Preview
 
