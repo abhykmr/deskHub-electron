@@ -10,15 +10,73 @@ const {
 
 const path = require("path");
 const fs = require("fs");
+const { execFile } = require("child_process");
 
 const scanApps = require("./appScanner");
-const { getFavicon } = require("../utils/iconFetcher");
+const { getFavicon, normalizeWebUrl } = require("../utils/iconFetcher");
 
 let mainWindow;
 let tray;
 let cachedSystemApps = [];
 
-const appsFile = path.join(__dirname, "../../data/apps.json");
+function getUserAppsFile() {
+  return path.join(app.getPath("userData"), "apps.json");
+}
+
+function getUserIconsDir() {
+  return path.join(app.getPath("userData"), "icons");
+}
+
+function readUserApps() {
+  try {
+    const appsFile = getUserAppsFile();
+    const apps = JSON.parse(fs.readFileSync(appsFile, "utf-8"));
+    return Array.isArray(apps) ? apps : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeUserApps(apps) {
+  const appsFile = getUserAppsFile();
+
+  fs.mkdirSync(path.dirname(appsFile), { recursive: true });
+  fs.writeFileSync(appsFile, JSON.stringify(apps, null, 2), "utf-8");
+}
+
+function isWindowsShellTarget(appPath) {
+  return /^shell:/i.test(appPath);
+}
+
+function expandEnvironmentVariables(value) {
+  return value.replace(/%([^%]+)%/g, (match, name) => process.env[name] || match);
+}
+
+function launchWithExplorer(appPath) {
+  return new Promise((resolve) => {
+    execFile("explorer.exe", [appPath], (error) => {
+      resolve(error ? error.message : "");
+    });
+  });
+}
+
+async function launchAppPath(appPath) {
+  if (!appPath || typeof appPath !== "string") {
+    return "Invalid app path";
+  }
+
+  if (isWindowsShellTarget(appPath)) {
+    return launchWithExplorer(appPath);
+  }
+
+  const resolvedPath = expandEnvironmentVariables(appPath);
+
+  if (!fs.existsSync(resolvedPath)) {
+    return "App path no longer exists";
+  }
+
+  return shell.openPath(resolvedPath);
+}
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -40,10 +98,10 @@ function createWindow() {
 
   mainWindow.loadFile(path.join(__dirname, "../renderer/index.html"));
 
-  // Open DevTools only in development
-  if (!app.isPackaged) {
-    mainWindow.webContents.openDevTools();
-  }
+  // // Open DevTools only in development
+  // if (!app.isPackaged) {
+  //   mainWindow.webContents.openDevTools();
+  // }
 
   // Prevent closing → hide instead
   mainWindow.on("close", (event) => {
@@ -67,13 +125,28 @@ Launch Desktop Apps
 
 ipcMain.handle("launch-app", async (event, appPath) => {
   console.log("Launch request:", appPath);
-  const result = await shell.openPath(appPath);
+  const result = await launchAppPath(appPath);
 
   console.log("Launch result:", result);
 
   if (result) {
     console.log("Error launching app:", result);
   }
+
+  return result;
+});
+
+ipcMain.handle("open-web-app", async (event, url) => {
+  let normalizedUrl;
+
+  try {
+    normalizedUrl = normalizeWebUrl(url || "");
+  } catch (error) {
+    return error.message;
+  }
+
+  await shell.openExternal(normalizedUrl);
+  return "";
 });
 
 /*
@@ -81,26 +154,38 @@ ipcMain.handle("launch-app", async (event, appPath) => {
 Add Web App
 ------------------------------------------------
 */
-ipcMain.on("add-web-app", (event, newApp) => {
-  let apps = [];
+ipcMain.handle("add-web-app", async (event, newApp) => {
+  const name = typeof newApp.name === "string" ? newApp.name.trim() : "";
 
-  try {
-    apps = JSON.parse(fs.readFileSync(appsFile));
-  } catch {
-    apps = [];
+  if (!name) {
+    return { ok: false, error: "App name is required" };
   }
 
+  let url;
+
+  try {
+    url = normalizeWebUrl(newApp.url || "");
+  } catch (error) {
+    return { ok: false, error: error.message };
+  }
+
+  const apps = readUserApps();
+
   // 🔥 Add favicon here
-  const icon = getFavicon(newApp.url);
+  const icon = getFavicon(url);
 
   const appWithIcon = {
-    ...newApp,
+    name,
+    type: "web",
+    url,
     icon,
   };
 
   apps.push(appWithIcon);
 
-  fs.writeFileSync(appsFile, JSON.stringify(apps, null, 2));
+  writeUserApps(apps);
+
+  return { ok: true, app: appWithIcon };
 });
 
 /*
@@ -110,13 +195,7 @@ Get Apps (system + user)
 */
 
 ipcMain.handle("get-apps", async () => {
-  let userApps = [];
-
-  try {
-    userApps = JSON.parse(fs.readFileSync(appsFile));
-  } catch {
-    userApps = [];
-  }
+  const userApps = readUserApps();
 
   return [...cachedSystemApps, ...userApps];
 });
@@ -136,13 +215,16 @@ app.whenReady().then(async () => {
   ---------------------------------------------
   */
 
-  scanApps((apps) => {
-    cachedSystemApps = apps;
+  scanApps(
+    (apps) => {
+      cachedSystemApps = apps;
 
-    if (mainWindow) {
-      mainWindow.webContents.send("apps-updated", cachedSystemApps);
-    }
-  });
+      if (mainWindow) {
+        mainWindow.webContents.send("apps-updated", cachedSystemApps);
+      }
+    },
+    { iconDir: getUserIconsDir() },
+  );
 
   /*
   ---------------------------------------------

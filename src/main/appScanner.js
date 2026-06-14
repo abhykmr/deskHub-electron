@@ -4,6 +4,7 @@ const ws = require("windows-shortcuts");
 const extractIcon = require("extract-file-icon");
 const WinReg = require("winreg");
 const { exec } = require("child_process");
+const { pathToFileURL } = require("url");
 
 /*
 ------------------------------------------------
@@ -29,6 +30,86 @@ function isHidden(name) {
   return HIDDEN_KEYWORDS.some((k) => lower.includes(k));
 }
 
+function sanitizeFileName(name) {
+  return name.replace(/[<>:"/\\|?*]/g, "-").trim();
+}
+
+function getIconUrl(target, name, iconDir) {
+  if (!iconDir) return null;
+
+  const safeName = sanitizeFileName(name);
+  if (!safeName) return null;
+
+  const iconPath = path.join(iconDir, safeName + ".png");
+
+  try {
+    fs.mkdirSync(iconDir, { recursive: true });
+
+    const hasValidCachedIcon =
+      fs.existsSync(iconPath) && fs.statSync(iconPath).size > 0;
+
+    if (!hasValidCachedIcon) {
+      if (fs.existsSync(iconPath)) {
+        fs.unlinkSync(iconPath);
+      }
+
+      const iconBuffer = extractIcon(target, 32);
+
+      if (!iconBuffer || !iconBuffer.length) {
+        return null;
+      }
+
+      fs.writeFileSync(iconPath, iconBuffer);
+    }
+
+    if (!fs.existsSync(iconPath) || fs.statSync(iconPath).size === 0) {
+      return null;
+    }
+
+    return pathToFileURL(iconPath).href;
+  } catch {
+    return null;
+  }
+}
+
+function expandEnvironmentVariables(value) {
+  return value.replace(/%([^%]+)%/g, (match, name) => process.env[name] || match);
+}
+
+function stripQuotes(value) {
+  if (value.startsWith('"') && value.endsWith('"')) {
+    return value.slice(1, -1);
+  }
+
+  return value;
+}
+
+function resolveExecutablePath(value) {
+  if (!value || typeof value !== "string") return null;
+
+  let cleanedValue = value.trim();
+  if (!cleanedValue) return null;
+
+  cleanedValue = expandEnvironmentVariables(cleanedValue);
+
+  if (cleanedValue.startsWith('"')) {
+    const quotedPath = cleanedValue.match(/^"([^"]+)"/);
+    return quotedPath ? quotedPath[1] : null;
+  }
+
+  const executableMatch = cleanedValue.match(/^(.+?\.(?:exe|msc|cpl|bat|cmd|com|url|lnk|chm|html?|txt))/i);
+  if (executableMatch) {
+    return stripQuotes(executableMatch[1].trim());
+  }
+
+  return stripQuotes(cleanedValue);
+}
+
+function isLaunchableDesktopPath(value) {
+  const resolvedPath = resolveExecutablePath(value);
+  return Boolean(resolvedPath && fs.existsSync(resolvedPath));
+}
+
 /*
 ------------------------------------------------
 Shortcut Parser
@@ -50,7 +131,7 @@ Start Menu Scanner
 ------------------------------------------------
 */
 
-async function scanStartMenu() {
+async function scanStartMenu(iconDir) {
   const startMenus = [
     path.join(process.env.APPDATA, "Microsoft/Windows/Start Menu/Programs"),
     "C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs",
@@ -79,25 +160,16 @@ async function scanStartMenu() {
       if (!item.endsWith(".lnk")) continue;
 
       const target = await queryShortcut(fullPath);
-      if (!target) continue;
-      if (!fs.existsSync(target)) continue;
+      const launchPath = resolveExecutablePath(target);
+      if (!launchPath) continue;
+      if (!fs.existsSync(launchPath)) continue;
 
       const name = item.replace(".lnk", "");
 
-      const iconName = name + ".png";
-      const iconPath = path.join(__dirname, "../../assets/icons", iconName);
-
-      try {
-        if (!fs.existsSync(iconPath)) {
-          const iconBuffer = extractIcon(target, 32);
-          fs.writeFileSync(iconPath, iconBuffer);
-        }
-      } catch {}
-
       apps.push({
         name,
-        path: target,
-        icon: iconName,
+        path: launchPath,
+        icon: getIconUrl(launchPath, name, iconDir),
         type: "desktop",
         hidden: isHidden(name),
       });
@@ -138,9 +210,13 @@ function scanRegistryHive(hive) {
           const icon = values.find((v) => v.name === "DisplayIcon");
 
           if (name && icon) {
-            let exe = icon.value;
+            const exe = resolveExecutablePath(icon.value);
 
-            if (exe.includes(",")) exe = exe.split(",")[0];
+            if (!isLaunchableDesktopPath(exe)) {
+              pending--;
+              if (pending === 0) resolve(apps);
+              return;
+            }
 
             apps.push({
               name: name.value,
@@ -220,10 +296,10 @@ Main Scanner (Progressive)
 ------------------------------------------------
 */
 
-async function scanApps(onUpdate) {
+async function scanApps(onUpdate, options = {}) {
   let collected = [];
 
-  const startMenuApps = await scanStartMenu();
+  const startMenuApps = await scanStartMenu(options.iconDir);
   collected = [...collected, ...startMenuApps];
   onUpdate(deduplicate(collected));
 

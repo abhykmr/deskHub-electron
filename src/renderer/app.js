@@ -13,6 +13,16 @@ let allApps = [];
 let filteredApps = [];
 let selectedIndex = 0;
 
+function getIconSrc(app) {
+  if (!app.icon) return "../../assets/tray.png";
+
+  if (/^(https?:|file:|data:)/.test(app.icon)) {
+    return app.icon;
+  }
+
+  return `../../assets/icons/${app.icon}`;
+}
+
 /*
 ------------------------------------------------
 Modal Controls
@@ -134,9 +144,7 @@ function renderApps(apps) {
 
     const icon = document.createElement("img");
 
-    icon.src = app.icon
-      ? `../../assets/icons/${app.icon}`
-      : "../../assets/tray.png";
+    icon.src = getIconSrc(app);
 
     icon.onerror = () => {
       icon.src = "../../assets/tray.png";

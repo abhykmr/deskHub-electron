@@ -3,7 +3,9 @@ const { contextBridge, ipcRenderer } = require("electron");
 contextBridge.exposeInMainWorld("api", {
   launchApp: (appPath) => ipcRenderer.invoke("launch-app", appPath),
 
-  addWebApp: (app) => ipcRenderer.send("add-web-app", app),
+  openWebApp: (url) => ipcRenderer.invoke("open-web-app", url),
+
+  addWebApp: (app) => ipcRenderer.invoke("add-web-app", app),
 
   getApps: () => ipcRenderer.invoke("get-apps"),
 
